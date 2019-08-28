@@ -154,11 +154,11 @@ do
 
     # Do a 'git fetch' if requested
     if [ "$DO_FETCH" -eq 1 ]; then
-        git --work-tree "$(dirname "$GIT_DIR")" --git-dir "$GIT_DIR" fetch -q >/dev/null
+        git --work-tree "$PROJ_DIR" --git-dir "$GIT_DIR" fetch -q >/dev/null
     fi
 
     # Refresh the index, or we might get wrong results.
-    git --work-tree "$(dirname "$GIT_DIR")" --git-dir "$GIT_DIR" update-index -q --refresh >/dev/null 2>&1
+    git --work-tree "$PROJ_DIR" --git-dir "$GIT_DIR" update-index -q --refresh >/dev/null 2>&1
 
     # Find all remote branches that have been checked out and figure out if
     # they need a push or pull. We do this with various tests and put the name
@@ -222,10 +222,10 @@ do
     NEEDS_UPSTREAM_BRANCHES=$(printf "$NEEDS_UPSTREAM_BRANCHES" | sort | uniq | tr '\n' ',' | sed "s/^,\(.*\),$/\1/")
 
     # Find out if there are unstaged, uncommitted or untracked changes
-    UNSTAGED=$(git --work-tree "$(dirname "$GIT_DIR")" --git-dir "$GIT_DIR" diff-index --quiet HEAD -- 2>/dev/null; echo $?)
-    UNCOMMITTED=$(git --work-tree "$(dirname "$GIT_DIR")" --git-dir "$GIT_DIR" diff-files --quiet --ignore-submodules --; echo $?)
-    UNTRACKED=$(git --work-tree "$(dirname "$GIT_DIR")" --git-dir "$GIT_DIR" ls-files --exclude-standard --others)
-    cd "$(dirname "$GIT_DIR")" || exit
+    UNSTAGED=$(git --work-tree "$PROJ_DIR" --git-dir "$GIT_DIR" diff-index --quiet HEAD -- 2>/dev/null; echo $?)
+    UNCOMMITTED=$(git --work-tree "$PROJ_DIR" --git-dir "$GIT_DIR" diff-files --quiet --ignore-submodules --; echo $?)
+    UNTRACKED=$(git --work-tree "$PROJ_DIR" --git-dir "$GIT_DIR" ls-files --exclude-standard --others)
+    cd "$PROJ_DIR" || exit
     STASHES=$(git stash list | wc -l)
     cd "$OLDPWD" || exit
 
