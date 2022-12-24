@@ -161,7 +161,7 @@ if [ "$DEPTH" -ne 0 ]; then
     FIND_OPTS="$FIND_OPTS -maxdepth $DEPTH"
 fi
 
-# Go through positional arguments (DIRs) or '.' if no argumnets are given
+# Go through positional arguments (DIRs) or '.' if no arguments are given
 for DIR in "${@:-"."}"; do
     # We *want* to expand parameters, so disable shellcheck for this error:
     # shellcheck disable=SC2086
