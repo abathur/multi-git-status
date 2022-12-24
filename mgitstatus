@@ -156,6 +156,8 @@ ID="$(id -n -u)"
 # infinitely deep
 FIND_OPTS=""
 if [ "$DEPTH" -ne 0 ]; then
+    # 1 lvl deeper since we're searching for the .git directory inside the project
+    ((DEPTH=$DEPTH+1))
     FIND_OPTS="$FIND_OPTS -maxdepth $DEPTH"
 fi
 
@@ -163,11 +165,11 @@ fi
 for DIR in "${@:-"."}"; do
     # We *want* to expand parameters, so disable shellcheck for this error:
     # shellcheck disable=SC2086
-    find -L "$DIR" $FIND_OPTS -type d | while read -r PROJ_DIR
+    find -L "$DIR" $FIND_OPTS -type d -name ".git" | while read -r GIT_DIR
     do
-        GIT_DIR="$PROJ_DIR/.git"
-        GIT_CONF="$PROJ_DIR/.git/config"
-        
+        PROJ_DIR="$(dirname "$GIT_DIR")"
+        GIT_CONF="$GIT_DIR/config"
+
         # Check if the repo is safe (https://github.blog/2022-04-12-git-security-vulnerability-announced/)
         if [ -d "$GIT_DIR" ]; then
             GIT_DIR_OWNER="$(ls -ld "$GIT_DIR" | awk 'NR==1 {print $3}')"
